@@ -4,12 +4,13 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\LogReplyRequest;
+use App\Http\Requests\WorkLogRequest;
 use App\Models\Task;
 use App\Models\WorkLog;
 use App\Services\WorkLogService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class WorkLogController extends Controller
 {
@@ -33,7 +34,7 @@ class WorkLogController extends Controller
         return ApiResponse::paginated($workLogs);
     }
 
-    public function store(Request $request, Task $task): JsonResponse
+    public function store(WorkLogRequest $request, Task $task): JsonResponse
     {
         $user = $request->user();
 
@@ -41,18 +42,7 @@ class WorkLogController extends Controller
             return ApiResponse::error('Forbidden. You can only log time for your own tasks.', 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'description' => 'required|string',
-            'hours_worked' => 'required|numeric|min:0.25|max:24',
-            'attachment' => 'nullable|string',
-            'logged_at' => 'nullable|date',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
-        $data = $request->all();
+        $data = $request->validated();
         $data['task_id'] = $task->id;
         $data['user_id'] = $user->id;
 
@@ -81,7 +71,7 @@ class WorkLogController extends Controller
         return ApiResponse::success($replies);
     }
 
-    public function addReply(Request $request, WorkLog $workLog): JsonResponse
+    public function addReply(LogReplyRequest $request, WorkLog $workLog): JsonResponse
     {
         $user = $request->user();
 
@@ -91,15 +81,7 @@ class WorkLogController extends Controller
             return ApiResponse::error('Forbidden. Only project managers can reply to work logs.', 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'reply' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
-        $reply = $this->workLogService->addReply($workLog->id, $user->id, $request->reply);
+        $reply = $this->workLogService->addReply($workLog->id, $user->id, $request->validated()['reply']);
 
         return ApiResponse::success($reply, 'Reply added successfully', 201);
     }

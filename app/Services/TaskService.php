@@ -34,6 +34,10 @@ class TaskService
             $query->byProject($filters['project_id']);
         }
 
+        if (! empty($filters['project_ids'])) {
+            $query->whereIn('project_id', (array) $filters['project_ids']);
+        }
+
         if (! empty($filters['deadline_from']) && ! empty($filters['deadline_to'])) {
             $query->byDeadlineRange($filters['deadline_from'], $filters['deadline_to']);
         }

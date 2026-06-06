@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
-use App\Services\AuthService;
+use App\Http\Requests\LoginRequest;
+use App\Http\Requests\RegisterRequest;
 use App\Models\User;
+use App\Services\AuthService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -16,17 +18,8 @@ class AuthController extends Controller
         protected AuthService $authService
     ) {}
 
-    public function login(Request $request): JsonResponse
+    public function login(LoginRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'email' => 'required|email',
-            'password' => 'required|string',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
         try {
             $result = $this->authService->login($request->only('email', 'password'));
 
@@ -46,18 +39,8 @@ class AuthController extends Controller
         return ApiResponse::success(null, 'Logged out successfully');
     }
 
-    public function register(Request $request): JsonResponse
+    public function register(RegisterRequest $request): JsonResponse
     {
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string|min:8|confirmed',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
         $user = $this->authService->register($request->only('name', 'email', 'password'));
 
         return ApiResponse::success($user, 'Registration successful', 201);

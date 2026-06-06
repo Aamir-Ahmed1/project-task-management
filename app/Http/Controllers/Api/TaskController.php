@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\TaskRequest;
 use App\Models\Project;
 use App\Models\Task;
 use App\Services\TaskService;
@@ -31,14 +32,7 @@ class TaskController extends Controller
                 return ApiResponse::error('Forbidden. You can only view tasks from your projects.', 403);
             }
             if (empty($filters['project_id'])) {
-                $tasks = Task::whereIn('project_id', $managedProjectIds);
-                $filters['per_page'] = $filters['per_page'] ?? 15;
-                $perPage = $filters['per_page'];
-                $tasks = $tasks->with(['project:id,name', 'assignedUser:id,name'])
-                    ->orderBy('created_at', 'desc')
-                    ->paginate($perPage);
-
-                return ApiResponse::paginated($tasks);
+                $filters['project_ids'] = $managedProjectIds;
             }
         }
 
@@ -47,7 +41,7 @@ class TaskController extends Controller
         return ApiResponse::paginated($tasks);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(TaskRequest $request): JsonResponse
     {
         $user = $request->user();
 
@@ -55,22 +49,7 @@ class TaskController extends Controller
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'priority' => 'nullable|string|in:low,medium,high,critical',
-            'status' => 'nullable|string|in:to_do,in_progress,in_review,completed,blocked',
-            'deadline' => 'nullable|date',
-            'estimated_hours' => 'nullable|numeric|min:0',
-            'project_id' => 'required|exists:projects,id',
-            'assigned_to' => 'nullable|exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
-        $data = $request->all();
+        $data = $request->validated();
         $data['created_by'] = $user->id;
 
         if ($user->hasRole('project-manager')) {
@@ -104,7 +83,7 @@ class TaskController extends Controller
         return ApiResponse::success($result);
     }
 
-    public function update(Request $request, Task $task): JsonResponse
+    public function update(TaskRequest $request, Task $task): JsonResponse
     {
         $user = $request->user();
 
@@ -114,22 +93,7 @@ class TaskController extends Controller
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'priority' => 'nullable|string|in:low,medium,high,critical',
-            'status' => 'nullable|string|in:to_do,in_progress,in_review,completed,blocked',
-            'deadline' => 'nullable|date',
-            'estimated_hours' => 'nullable|numeric|min:0',
-            'actual_hours' => 'nullable|numeric|min:0',
-            'assigned_to' => 'nullable|exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
-        $task = $this->taskService->update($task, $request->all());
+        $task = $this->taskService->update($task, $request->validated());
 
         return ApiResponse::success($task, 'Task updated successfully');
     }

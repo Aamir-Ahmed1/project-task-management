@@ -47,11 +47,12 @@ class Project extends Model
 
     public function getCompletionPercentageAttribute()
     {
-        $total = $this->tasks()->count();
+        $total = $this->tasks_count ?? $this->tasks()->count();
         if ($total === 0) {
             return 0;
         }
-        $completed = $this->tasks()->where('status', 'completed')->count();
+
+        $completed = $this->completed_tasks_count ?? $this->tasks()->where('status', 'completed')->count();
 
         return round(($completed / $total) * 100, 2);
     }

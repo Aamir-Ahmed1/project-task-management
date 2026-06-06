@@ -4,11 +4,11 @@ namespace App\Http\Controllers\Api;
 
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
+use App\Http\Requests\ProjectRequest;
 use App\Models\Project;
 use App\Services\ProjectService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
 
 class ProjectController extends Controller
 {
@@ -35,26 +35,13 @@ class ProjectController extends Controller
         return ApiResponse::paginated($projects);
     }
 
-    public function store(Request $request): JsonResponse
+    public function store(ProjectRequest $request): JsonResponse
     {
         if (! $request->user()->hasRole('admin')) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'status' => 'nullable|string|in:planning,active,completed,archived',
-            'project_manager_id' => 'required|exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
-        $data = $request->all();
+        $data = $request->validated();
         $data['created_by'] = $request->user()->id;
 
         $project = $this->projectService->create($data);
@@ -69,7 +56,7 @@ class ProjectController extends Controller
         return ApiResponse::success($result);
     }
 
-    public function update(Request $request, Project $project): JsonResponse
+    public function update(ProjectRequest $request, Project $project): JsonResponse
     {
         $user = $request->user();
 
@@ -77,20 +64,7 @@ class ProjectController extends Controller
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
-        $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string',
-            'start_date' => 'nullable|date',
-            'end_date' => 'nullable|date|after_or_equal:start_date',
-            'status' => 'nullable|string|in:planning,active,completed,archived',
-            'project_manager_id' => 'sometimes|exists:users,id',
-        ]);
-
-        if ($validator->fails()) {
-            return ApiResponse::error('Validation failed', 422, $validator->errors());
-        }
-
-        $project = $this->projectService->update($project, $request->all());
+        $project = $this->projectService->update($project, $request->validated());
 
         return ApiResponse::success($project, 'Project updated successfully');
     }

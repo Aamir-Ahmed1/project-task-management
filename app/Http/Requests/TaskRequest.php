@@ -13,14 +13,29 @@ class TaskRequest extends FormRequest
 
     public function rules(): array
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'priority' => 'required|in:low,medium,high,critical',
-            'deadline' => 'required|date',
-            'estimated_hours' => 'required|numeric|min:0|max:9999',
-            'project_id' => 'required_if:create|exists:projects,id',
+            'priority' => 'nullable|string|in:low,medium,high,critical',
+            'status' => 'nullable|string|in:to_do,in_progress,in_review,completed,blocked',
+            'deadline' => 'nullable|date',
+            'estimated_hours' => 'nullable|numeric|min:0',
+            'actual_hours' => 'nullable|numeric|min:0',
+            'project_id' => 'required|exists:projects,id',
+            'assigned_to' => 'nullable|exists:users,id',
         ];
+
+        $method = $this->route()->getActionMethod();
+
+        if (in_array($method, ['update', 'updateStatus'])) {
+            foreach ($rules as $field => $rule) {
+                if (str_starts_with($rule, 'required')) {
+                    $rules[$field] = str_replace('required', 'sometimes', $rule);
+                }
+            }
+        }
+
+        return $rules;
     }
 
     public function messages(): array
@@ -28,15 +43,11 @@ class TaskRequest extends FormRequest
         return [
             'name.required' => 'The task name is required.',
             'name.max' => 'The task name must not exceed 255 characters.',
-            'priority.required' => 'Please select a priority level.',
             'priority.in' => 'Priority must be one of: low, medium, high, critical.',
-            'deadline.required' => 'Please provide a deadline.',
-            'estimated_hours.required' => 'Please provide estimated hours.',
-            'estimated_hours.numeric' => 'Estimated hours must be a number.',
-            'estimated_hours.min' => 'Estimated hours must be at least 0.',
-            'estimated_hours.max' => 'Estimated hours must not exceed 9999.',
-            'project_id.required_if' => 'Please select a project.',
+            'status.in' => 'Status must be one of: to_do, in_progress, in_review, completed, blocked.',
+            'project_id.required' => 'Please select a project.',
             'project_id.exists' => 'The selected project does not exist.',
+            'assigned_to.exists' => 'The selected user does not exist.',
         ];
     }
 }
