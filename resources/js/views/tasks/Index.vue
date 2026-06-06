@@ -13,10 +13,11 @@
                     <div class="col-md-3">
                         <select v-model="filters.status" class="form-select form-select-sm" @change="fetchTasks(1)">
                             <option value="">All Status</option>
-                            <option value="pending">Pending</option>
+                            <option value="to_do">To Do</option>
                             <option value="in_progress">In Progress</option>
-                            <option value="review">Review</option>
+                            <option value="in_review">In Review</option>
                             <option value="completed">Completed</option>
+                            <option value="blocked">Blocked</option>
                         </select>
                     </div>
                     <div class="col-md-3">
@@ -155,7 +156,7 @@ function priorityBadge(priority) {
 }
 
 function statusBadge(status) {
-    const map = { pending: 'bg-secondary', in_progress: 'bg-primary', review: 'bg-info text-dark', completed: 'bg-success' }
+    const map = { to_do: 'bg-secondary', in_progress: 'bg-primary', in_review: 'bg-info text-dark', completed: 'bg-success', blocked: 'bg-dark' }
     return map[status] || 'bg-secondary'
 }
 

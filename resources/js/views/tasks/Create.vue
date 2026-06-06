@@ -39,10 +39,11 @@
                         <div class="col-md-4">
                             <label class="form-label">Status</label>
                             <select v-model="form.status" class="form-select" :class="{ 'is-invalid': errors.status }">
-                                <option value="pending">Pending</option>
+                                <option value="to_do">To Do</option>
                                 <option value="in_progress">In Progress</option>
-                                <option value="review">Review</option>
+                                <option value="in_review">In Review</option>
                                 <option value="completed">Completed</option>
+                                <option value="blocked">Blocked</option>
                             </select>
                             <div v-if="errors.status" class="invalid-feedback">{{ errors.status }}</div>
                         </div>
@@ -110,7 +111,7 @@ const form = ref({
     name: '',
     description: '',
     priority: 'medium',
-    status: 'pending',
+    status: 'to_do',
     deadline: '',
     estimated_hours: '',
     project_id: route.query.project_id || '',

@@ -228,9 +228,8 @@ const workLogErrors = ref({})
 const savingWorkLog = ref(false)
 
 const availableStatuses = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'in_progress', label: 'In Progress' },
-    { value: 'review', label: 'Review' },
+    { value: 'to_do', label: 'To Do' },
+    { value: 'in_review', label: 'In Review' },
     { value: 'completed', label: 'Completed' },
 ]
 
@@ -248,7 +247,7 @@ function priorityBadge(priority) {
 }
 
 function statusBadge(status) {
-    const map = { pending: 'bg-secondary', in_progress: 'bg-primary', review: 'bg-info text-dark', completed: 'bg-success' }
+    const map = { to_do: 'bg-secondary', in_progress: 'bg-primary', in_review: 'bg-info text-dark', completed: 'bg-success', blocked: 'bg-dark' }
     return map[status] || 'bg-secondary'
 }
 

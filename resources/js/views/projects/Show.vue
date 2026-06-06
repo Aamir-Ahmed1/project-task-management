@@ -162,7 +162,7 @@ function statusBadge(status) {
 }
 
 function taskStatusBadge(status) {
-    const map = { todo: 'bg-secondary', in_progress: 'bg-primary', completed: 'bg-success', cancelled: 'bg-danger' }
+    const map = { to_do: 'bg-secondary', in_progress: 'bg-primary', in_review: 'bg-info text-dark', completed: 'bg-success', blocked: 'bg-dark' }
     return map[status] || 'bg-secondary'
 }
 
