@@ -59,7 +59,7 @@ class TaskController extends Controller
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'nullable|string|in:low,medium,high,critical',
-            'status' => 'nullable|string|in:pending,in_progress,review,completed',
+            'status' => 'nullable|string|in:to_do,in_progress,in_review,completed,blocked',
             'deadline' => 'nullable|date',
             'estimated_hours' => 'nullable|numeric|min:0',
             'project_id' => 'required|exists:projects,id',
@@ -118,7 +118,7 @@ class TaskController extends Controller
             'name' => 'sometimes|string|max:255',
             'description' => 'nullable|string',
             'priority' => 'nullable|string|in:low,medium,high,critical',
-            'status' => 'nullable|string|in:pending,in_progress,review,completed',
+            'status' => 'nullable|string|in:to_do,in_progress,in_review,completed,blocked',
             'deadline' => 'nullable|date',
             'estimated_hours' => 'nullable|numeric|min:0',
             'actual_hours' => 'nullable|numeric|min:0',
@@ -160,7 +160,7 @@ class TaskController extends Controller
         }
 
         $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:pending,in_progress,review,completed',
+            'status' => 'required|string|in:to_do,in_progress,in_review,completed,blocked',
         ]);
 
         if ($validator->fails()) {
