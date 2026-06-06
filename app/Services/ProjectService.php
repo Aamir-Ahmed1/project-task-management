@@ -3,7 +3,9 @@
 namespace App\Services;
 
 use App\Models\Project;
+use App\Notifications\ProjectAssigned;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\Cache;
 
 class ProjectService
 {
@@ -43,7 +45,7 @@ class ProjectService
 
     public function create(array $data): Project
     {
-        return $this->project->create([
+        $project = $this->project->create([
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'start_date' => $data['start_date'] ?? now()->format('Y-m-d'),
@@ -52,10 +54,22 @@ class ProjectService
             'project_manager_id' => $data['project_manager_id'] ?? auth()->id(),
             'created_by' => $data['created_by'] ?? auth()->id() ?? 1,
         ]);
+
+        if ($project->project_manager_id && $project->project_manager_id !== auth()->id()) {
+            $project->load('projectManager');
+            $project->projectManager?->notify(new ProjectAssigned($project, auth()->user()));
+        }
+
+        Cache::forget('dashboard.admin');
+        Cache::forget('report.projects.all');
+
+        return $project;
     }
 
     public function update(Project $project, array $data): Project
     {
+        $oldManagerId = $project->project_manager_id;
+
         $project->update([
             'name' => $data['name'] ?? $project->name,
             'description' => $data['description'] ?? $project->description,
@@ -65,7 +79,18 @@ class ProjectService
             'project_manager_id' => $data['project_manager_id'] ?? $project->project_manager_id,
         ]);
 
-        return $project->fresh();
+        $fresh = $project->fresh();
+
+        if (isset($data['project_manager_id']) && (int) $data['project_manager_id'] !== (int) $oldManagerId) {
+            $fresh->load('projectManager');
+            $fresh->projectManager?->notify(new ProjectAssigned($fresh, auth()->user()));
+        }
+
+        Cache::forget('dashboard.admin');
+        Cache::forget("report.project.{$project->id}");
+        Cache::forget('report.projects.all');
+
+        return $fresh;
     }
 
     public function archive(Project $project): void
