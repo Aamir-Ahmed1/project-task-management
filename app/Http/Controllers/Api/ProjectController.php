@@ -26,7 +26,7 @@ class ProjectController extends Controller
 
         $filters = $request->only('status', 'manager_id', 'date_from', 'date_to', 'search', 'per_page');
 
-        if ($user->hasRole('project_manager')) {
+        if ($user->hasRole('project-manager')) {
             $filters['manager_id'] = $user->id;
         }
 
@@ -73,7 +73,7 @@ class ProjectController extends Controller
     {
         $user = $request->user();
 
-        if (! $user->hasRole('admin') && ! ($user->hasRole('project_manager') && $project->project_manager_id === $user->id)) {
+        if (! $user->hasRole('admin') && ! ($user->hasRole('project-manager') && $project->project_manager_id === $user->id)) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
@@ -110,7 +110,7 @@ class ProjectController extends Controller
     {
         $user = $request->user();
 
-        if (! $user->hasRole('admin') && ! ($user->hasRole('project_manager') && $project->project_manager_id === $user->id)) {
+        if (! $user->hasRole('admin') && ! ($user->hasRole('project-manager') && $project->project_manager_id === $user->id)) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 

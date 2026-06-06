@@ -96,7 +96,7 @@ const form = ref({
 async function fetchManagers() {
     try {
         const res = await api.get('/users')
-        managers.value = res.data.data.filter(u => u.roles?.some(r => r.name === 'project-manager' || r.name === 'admin'))
+        managers.value = res.data.data.filter(u => u.role === 'project-manager' || u.role === 'admin')
     } catch (e) {
         console.error(e)
     }
