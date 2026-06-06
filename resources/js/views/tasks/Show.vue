@@ -150,14 +150,25 @@
                                         <small class="text-muted">{{ entry.occurred_at }}</small>
                                     </div>
                                     <p class="mb-0 small">{{ entry.action }}</p>
-                                    <div v-if="entry.previous_values || entry.new_values" class="mt-1 small text-muted">
-                                        <template v-if="entry.previous_values">
-                                            <span class="text-danger">{{ JSON.stringify(entry.previous_values) }}</span>
-                                        </template>
-                                        <template v-if="entry.new_values">
-                                            <span v-if="entry.previous_values"> → </span>
-                                            <span class="text-success">{{ JSON.stringify(entry.new_values) }}</span>
-                                        </template>
+                                    <div v-if="entry.action === 'created' && entry.new_values" class="mt-1 small">
+                                        <span v-for="key in relevantKeys(entry.new_values)" :key="key" class="d-inline-block me-2">
+                                            <span class="text-muted">{{ formatLabel(key) }}:</span>
+                                            <span class="text-success">{{ formatValue(entry.new_values[key]) }}</span>
+                                        </span>
+                                    </div>
+                                    <div v-else-if="entry.action === 'deleted' && entry.previous_values" class="mt-1 text-danger small">
+                                        <span v-for="key in relevantKeys(entry.previous_values)" :key="key" class="d-inline-block me-2">
+                                            <span class="text-muted">{{ formatLabel(key) }}:</span>
+                                            <span>{{ formatValue(entry.previous_values[key]) }}</span>
+                                        </span>
+                                    </div>
+                                    <div v-else-if="entry.previous_values || entry.new_values" class="mt-1 small">
+                                        <span v-for="key in mergedKeys(entry.previous_values, entry.new_values)" :key="key" class="d-inline-block me-3">
+                                            <span class="text-muted">{{ formatLabel(key) }}:</span>
+                                            <span v-if="entry.previous_values?.[key] !== undefined" class="text-danger">{{ formatValue(entry.previous_values[key]) }}</span>
+                                            <span v-if="entry.previous_values?.[key] !== undefined && entry.new_values?.[key] !== undefined"> → </span>
+                                            <span v-if="entry.new_values?.[key] !== undefined" class="text-success">{{ formatValue(entry.new_values[key]) }}</span>
+                                        </span>
                                     </div>
                                 </div>
                             </div>
@@ -251,6 +262,26 @@ function priorityBadge(priority) {
 function statusBadge(status) {
     const map = { to_do: 'bg-secondary', in_progress: 'bg-primary', in_review: 'bg-info text-dark', completed: 'bg-success', blocked: 'bg-dark' }
     return map[status] || 'bg-secondary'
+}
+
+const skipFields = ['id', 'created_at', 'updated_at', 'created_by']
+
+function formatLabel(key) {
+    return key.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())
+}
+
+function formatValue(val) {
+    if (val === null || val === undefined) return '—'
+    if (typeof val === 'boolean') return val ? 'Yes' : 'No'
+    return String(val)
+}
+
+function relevantKeys(obj) {
+    return Object.keys(obj || {}).filter(k => !skipFields.includes(k))
+}
+
+function mergedKeys(a, b) {
+    return relevantKeys({ ...(a || {}), ...(b || {}) })
 }
 
 async function fetchTask() {
