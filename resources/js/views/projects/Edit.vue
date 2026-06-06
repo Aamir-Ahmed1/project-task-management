@@ -49,10 +49,12 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Project Manager ID</label>
-                            <input v-model="form.project_manager_id" type="number" class="form-control" :class="{ 'is-invalid': errors.project_manager_id }">
+                            <label class="form-label">Project Manager <span class="text-danger">*</span></label>
+                            <select v-model="form.project_manager_id" class="form-select" :class="{ 'is-invalid': errors.project_manager_id }" required>
+                                <option value="">-- Select Manager --</option>
+                                <option v-for="m in managers" :key="m.id" :value="m.id">{{ m.name }}</option>
+                            </select>
                             <div v-if="errors.project_manager_id" class="invalid-feedback">{{ errors.project_manager_id }}</div>
-                            <div class="form-text">Enter the user ID of the project manager.</div>
                         </div>
 
                         <div class="col-12">
@@ -81,6 +83,7 @@ const loading = ref(true)
 const saving = ref(false)
 const errors = ref({})
 
+const managers = ref([])
 const form = ref({
     name: '',
     description: '',
@@ -90,7 +93,17 @@ const form = ref({
     project_manager_id: '',
 })
 
+async function fetchManagers() {
+    try {
+        const res = await api.get('/users')
+        managers.value = res.data.data.filter(u => u.roles?.some(r => r.name === 'project-manager' || r.name === 'admin'))
+    } catch (e) {
+        console.error(e)
+    }
+}
+
 onMounted(async () => {
+    await fetchManagers()
     try {
         const res = await api.get('/projects/' + route.params.id)
         const project = res.data.data
