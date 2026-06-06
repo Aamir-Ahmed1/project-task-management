@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\AuditLog;
 use App\Models\Task;
+use App\Notifications\TaskAssigned;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 
 class TaskService
@@ -61,7 +62,7 @@ class TaskService
 
     public function create(array $data): Task
     {
-        return $this->task->create([
+        $task = $this->task->create([
             'name' => $data['name'],
             'description' => $data['description'] ?? null,
             'priority' => $data['priority'] ?? 'medium',
@@ -72,10 +73,19 @@ class TaskService
             'assigned_to' => $data['assigned_to'] ?? null,
             'created_by' => $data['created_by'] ?? auth()->id() ?? 1,
         ]);
+
+        if ($task->assigned_to) {
+            $task->load('assignedUser', 'project');
+            $task->assignedUser?->notify(new TaskAssigned($task, auth()->user()));
+        }
+
+        return $task;
     }
 
     public function update(Task $task, array $data): Task
     {
+        $oldAssignee = $task->assigned_to;
+
         $task->update([
             'name' => $data['name'] ?? $task->name,
             'description' => $data['description'] ?? $task->description,
@@ -87,7 +97,14 @@ class TaskService
             'assigned_to' => $data['assigned_to'] ?? $task->assigned_to,
         ]);
 
-        return $task->fresh()->load('assignedUser:id,name');
+        $fresh = $task->fresh();
+
+        if (isset($data['assigned_to']) && (int) $data['assigned_to'] !== (int) $oldAssignee) {
+            $fresh->load('assignedUser', 'project');
+            $fresh->assignedUser?->notify(new TaskAssigned($fresh, auth()->user()));
+        }
+
+        return $fresh->load('assignedUser:id,name');
     }
 
     public function show(Task $task): Task

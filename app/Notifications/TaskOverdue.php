@@ -41,11 +41,12 @@ class TaskOverdue extends Notification
         $daysOverdue = (int) now()->diffInDays($this->task->deadline, false);
 
         return [
+            'title' => "Task Overdue: {$this->task->name}",
             'task_id' => $this->task->id,
             'task_name' => $this->task->name,
             'project_name' => $this->task->project->name,
             'deadline' => $this->task->deadline->format('Y-m-d'),
-            'message' => "Task {$this->task->name} is overdue by {$daysOverdue} days",
+            'message' => "Task \"{$this->task->name}\" in project \"{$this->task->project->name}\" is overdue by {$daysOverdue} days.",
         ];
     }
 }

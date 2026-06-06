@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\LogReply;
 use App\Models\WorkLog;
+use App\Notifications\WorkLogReply;
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
 use Illuminate\Database\Eloquent\Collection;
 
@@ -83,13 +84,23 @@ class WorkLogService
             ->paginate($perPage);
     }
 
-    public function addReply(int $workLogId, int $userId, string $reply): LogReply
+    public function addReply(int $workLogId, int $userId, string $replyText): LogReply
     {
-        return $this->logReply->create([
+        $workLog = $this->workLog->findOrFail($workLogId);
+
+        $reply = $this->logReply->create([
             'work_log_id' => $workLogId,
             'user_id' => $userId,
-            'reply' => $reply,
+            'reply' => $replyText,
         ]);
+
+        if ($workLog->user_id !== $userId) {
+            $workLog->load('task');
+            $reply->load('user');
+            $workLog->user->notify(new WorkLogReply($workLog, $reply));
+        }
+
+        return $reply;
     }
 
     public function getReplies(int $workLogId): Collection

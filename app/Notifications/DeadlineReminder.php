@@ -45,13 +45,22 @@ class DeadlineReminder extends Notification
 
     public function toArray(object $notifiable): array
     {
+        $hours = match ($this->type) {
+            '48h' => 48,
+            '24h' => 24,
+            '12h' => 12,
+            '1h' => 1,
+            default => 0,
+        };
+
         return [
+            'title' => "Reminder: Task due in {$hours} hours",
             'task_id' => $this->task->id,
             'task_name' => $this->task->name,
             'project_name' => $this->task->project->name,
             'deadline' => $this->task->deadline->format('Y-m-d'),
             'type' => $this->type,
-            'message' => "Reminder: Task {$this->task->name} is due in {$this->type}",
+            'message' => "Reminder: Task \"{$this->task->name}\" in project \"{$this->task->project->name}\" is due in {$hours} hours.",
         ];
     }
 }
