@@ -73,14 +73,16 @@
                     $statusColors = [
                         'to_do' => 'secondary',
                         'in_progress' => 'primary',
-                        'review' => 'warning',
+                        'in_review' => 'info',
                         'completed' => 'success',
+                        'blocked' => 'dark',
                     ];
                     $statusLabels = [
                         'to_do' => 'To Do',
                         'in_progress' => 'In Progress',
-                        'review' => 'Review',
+                        'in_review' => 'In Review',
                         'completed' => 'Completed',
+                        'blocked' => 'Blocked',
                     ];
                     $statusData = isset($tasks_by_status) ? $tasks_by_status : [];
                 @endphp

@@ -17,7 +17,7 @@
                     <option value="">All Statuses</option>
                     <option value="to_do" {{ request('status') === 'to_do' ? 'selected' : '' }}>To Do</option>
                     <option value="in_progress" {{ request('status') === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                    <option value="review" {{ request('status') === 'review' ? 'selected' : '' }}>In Review</option>
+                    <option value="in_review" {{ request('status') === 'in_review' ? 'selected' : '' }}>In Review</option>
                     <option value="completed" {{ request('status') === 'completed' ? 'selected' : '' }}>Completed</option>
                     <option value="blocked" {{ request('status') === 'blocked' ? 'selected' : '' }}>Blocked</option>
                 </select>
@@ -110,7 +110,7 @@
                         </td>
                         <td>
                             @php
-                                $sClasses = ['to_do' => 'bg-secondary', 'in_progress' => 'bg-warning', 'review' => 'bg-info', 'completed' => 'bg-success', 'blocked' => 'bg-danger'];
+                                $sClasses = ['to_do' => 'bg-secondary', 'in_progress' => 'bg-primary', 'in_review' => 'bg-info', 'completed' => 'bg-success', 'blocked' => 'bg-dark'];
                             @endphp
                             <span class="badge {{ $sClasses[$task->status] ?? 'bg-secondary' }}">
                                 {{ ucfirst(str_replace('_', ' ', $task->status)) }}

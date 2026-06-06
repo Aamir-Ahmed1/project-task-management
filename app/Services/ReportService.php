@@ -22,7 +22,7 @@ class ReportService
             ->selectRaw("
                 COUNT(*) as total,
                 SUM(CASE WHEN status = 'completed' THEN 1 ELSE 0 END) as completed,
-                SUM(CASE WHEN status = 'pending' THEN 1 ELSE 0 END) as pending
+                SUM(CASE WHEN status = 'to_do' THEN 1 ELSE 0 END) as pending
             ")
             ->first();
 

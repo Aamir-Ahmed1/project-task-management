@@ -97,7 +97,7 @@ class TaskController extends Controller
     public function updateStatus(Request $request, Task $task): RedirectResponse
     {
         $validated = $request->validate([
-            'status' => 'required|string|in:to_do,in_progress,review,completed',
+            'status' => 'required|string|in:to_do,in_progress,in_review,completed,blocked',
         ]);
 
         $this->taskService->update($task, ['status' => $validated['status']]);

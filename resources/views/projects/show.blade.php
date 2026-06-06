@@ -94,7 +94,7 @@
                     </li>
                     <li class="d-flex justify-content-between mb-1">
                         <span><i class="fas fa-circle text-info me-1"></i>In Review</span>
-                        <span class="badge bg-info">{{ $statusCount['review'] ?? 0 }}</span>
+                        <span class="badge bg-info">{{ $statusCount['in_review'] ?? 0 }}</span>
                     </li>
                     <li class="d-flex justify-content-between mb-1">
                         <span><i class="fas fa-circle text-success me-1"></i>Completed</span>
@@ -143,7 +143,7 @@
                                 </td>
                                 <td>
                                     @php
-                                        $sClasses = ['to_do' => 'bg-secondary', 'in_progress' => 'bg-warning', 'review' => 'bg-info', 'completed' => 'bg-success', 'blocked' => 'bg-danger'];
+                                        $sClasses = ['to_do' => 'bg-secondary', 'in_progress' => 'bg-primary', 'in_review' => 'bg-info', 'completed' => 'bg-success', 'blocked' => 'bg-dark'];
                                     @endphp
                                     <span class="badge {{ $sClasses[$task->status] ?? 'bg-secondary' }}">
                                         {{ ucfirst(str_replace('_', ' ', $task->status)) }}

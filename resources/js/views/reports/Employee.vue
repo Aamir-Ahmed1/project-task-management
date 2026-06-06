@@ -113,7 +113,7 @@ const tasksByStatus = computed(() => {
 })
 
 function statusBarBg(status) {
-    const map = { pending: 'bg-secondary', in_progress: 'bg-primary', review: 'bg-info', completed: 'bg-success' }
+    const map = { to_do: 'bg-secondary', in_progress: 'bg-primary', in_review: 'bg-info', completed: 'bg-success', blocked: 'bg-dark' }
     return map[status] || 'bg-secondary'
 }
 

@@ -229,8 +229,10 @@ const savingWorkLog = ref(false)
 
 const availableStatuses = [
     { value: 'to_do', label: 'To Do' },
+    { value: 'in_progress', label: 'In Progress' },
     { value: 'in_review', label: 'In Review' },
     { value: 'completed', label: 'Completed' },
+    { value: 'blocked', label: 'Blocked' },
 ]
 
 const status = computed(() => task.value.status)

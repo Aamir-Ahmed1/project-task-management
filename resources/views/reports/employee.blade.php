@@ -117,8 +117,8 @@
     </div>
     <div class="card-body">
         @php
-            $statusColors = ['to_do' => 'secondary', 'in_progress' => 'primary', 'review' => 'warning', 'completed' => 'success', 'pending' => 'secondary'];
-            $statusLabels = ['to_do' => 'To Do', 'in_progress' => 'In Progress', 'review' => 'Review', 'completed' => 'Completed', 'pending' => 'Pending'];
+            $statusColors = ['to_do' => 'secondary', 'in_progress' => 'primary', 'in_review' => 'info', 'completed' => 'success', 'blocked' => 'dark'];
+            $statusLabels = ['to_do' => 'To Do', 'in_progress' => 'In Progress', 'in_review' => 'In Review', 'completed' => 'Completed', 'blocked' => 'Blocked'];
             $statusData = isset($tasks_by_status) ? $tasks_by_status : [];
         @endphp
         @forelse ($statusData as $status => $count)

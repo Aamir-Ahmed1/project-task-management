@@ -45,7 +45,7 @@
                     <div class="col-sm-6 mb-2">
                         <strong>Status</strong><br>
                         @php
-                            $sClasses = ['to_do' => 'bg-secondary', 'in_progress' => 'bg-warning', 'review' => 'bg-info', 'completed' => 'bg-success', 'blocked' => 'bg-danger'];
+                            $sClasses = ['to_do' => 'bg-secondary', 'in_progress' => 'bg-primary', 'in_review' => 'bg-info', 'completed' => 'bg-success', 'blocked' => 'bg-dark'];
                         @endphp
                         <span class="badge {{ $sClasses[$task->status] ?? 'bg-secondary' }}">
                             {{ ucfirst(str_replace('_', ' ', $task->status)) }}
@@ -108,8 +108,9 @@
                             <select name="status" class="form-select">
                                 <option value="to_do" {{ $task->status === 'to_do' ? 'selected' : '' }}>To Do</option>
                                 <option value="in_progress" {{ $task->status === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                                <option value="review" {{ $task->status === 'review' ? 'selected' : '' }}>In Review</option>
+                                <option value="in_review" {{ $task->status === 'in_review' ? 'selected' : '' }}>In Review</option>
                                 <option value="completed" {{ $task->status === 'completed' ? 'selected' : '' }}>Completed</option>
+                                <option value="blocked" {{ $task->status === 'blocked' ? 'selected' : '' }}>Blocked</option>
                             </select>
                             <button class="btn btn-primary" type="submit">
                                 <i class="fas fa-arrow-right"></i>

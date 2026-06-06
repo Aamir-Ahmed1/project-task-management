@@ -53,8 +53,9 @@
                             class="form-select @error('status') is-invalid @enderror">
                         <option value="to_do" {{ old('status', 'to_do') === 'to_do' ? 'selected' : '' }}>To Do</option>
                         <option value="in_progress" {{ old('status') === 'in_progress' ? 'selected' : '' }}>In Progress</option>
-                        <option value="review" {{ old('status') === 'review' ? 'selected' : '' }}>In Review</option>
+                        <option value="in_review" {{ old('status') === 'in_review' ? 'selected' : '' }}>In Review</option>
                         <option value="completed" {{ old('status') === 'completed' ? 'selected' : '' }}>Completed</option>
+                        <option value="blocked" {{ old('status') === 'blocked' ? 'selected' : '' }}>Blocked</option>
                     </select>
                     @error('status')
                         <div class="invalid-feedback">{{ $message }}</div>
