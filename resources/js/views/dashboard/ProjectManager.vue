@@ -24,7 +24,7 @@
                             <table class="table mb-0">
                                 <thead><tr><th>Name</th><th>Status</th><th>Tasks</th><th>Progress</th></tr></thead>
                                 <tbody>
-                                    <tr v-for="p in dashboard.projects" :key="p.id">
+                                    <tr v-for="p in dashboard.managed_projects" :key="p.id">
                                         <td><router-link :to="'/projects/' + p.id">{{ p.name }}</router-link></td>
                                         <td><span class="badge" :class="statusBadge(p.status)">{{ p.status }}</span></td>
                                         <td>{{ p.tasks_count }}</td>
@@ -51,10 +51,10 @@
                                 <li v-for="task in dashboard.upcoming_deadlines" :key="task.id"
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <router-link :to="'/tasks/' + task.id" class="fw-semibold">{{ task.title }}</router-link>
-                                        <div class="small text-muted">{{ task.project?.name }}</div>
+                                        <router-link :to="'/tasks/' + task.id" class="fw-semibold">{{ task.name }}</router-link>
+                                        <div class="small text-muted">{{ task.project_name }}</div>
                                     </div>
-                                    <span class="badge" :class="daysBadge(task.days_remaining)">{{ task.days_remaining }} day{{ task.days_remaining !== 1 ? 's' : '' }}</span>
+                                    <span class="badge" :class="daysBadge(task.days_remaining ?? 0)">{{ task.days_remaining ?? 0 }} day{{ (task.days_remaining ?? 0) !== 1 ? 's' : '' }}</span>
                                 </li>
                                 <li v-if="!dashboard.upcoming_deadlines?.length" class="list-group-item text-muted text-center">No upcoming deadlines</li>
                             </ul>
@@ -95,10 +95,10 @@ const dashboard = ref({})
 const loading = ref(true)
 
 const stats = computed(() => [
-    { label: 'Managed Projects', value: dashboard.value.managed_projects, color: '#0d6efd' },
+    { label: 'Managed Projects', value: dashboard.value.total_managed_projects, color: '#0d6efd' },
     { label: 'Active Tasks', value: dashboard.value.active_tasks, color: '#198754' },
     { label: 'Completed Tasks', value: dashboard.value.completed_tasks, color: '#6f42c1' },
-    { label: 'Overdue Tasks', value: dashboard.value.overdue_tasks, color: '#dc3545' },
+    { label: 'Overdue Tasks', value: dashboard.value.overdue_tasks_count, color: '#dc3545' },
 ])
 
 function statusBadge(status) {

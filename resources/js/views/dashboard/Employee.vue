@@ -25,7 +25,7 @@
                                 <li v-for="task in dashboard.tasks_due_soon" :key="task.id"
                                     class="list-group-item d-flex justify-content-between align-items-center">
                                     <div>
-                                        <router-link :to="'/tasks/' + task.id" class="fw-semibold">{{ task.title }}</router-link>
+                                        <router-link :to="'/tasks/' + task.id" class="fw-semibold">{{ task.name }}</router-link>
                                         <div class="small text-muted">{{ task.project?.name }}</div>
                                     </div>
                                     <div class="text-end">
@@ -46,12 +46,12 @@
                                 <div v-for="log in dashboard.recent_activity" :key="log.id"
                                     class="list-group-item">
                                     <div class="d-flex justify-content-between">
-                                        <span class="fw-semibold">{{ log.action }}</span>
-                                        <small class="text-muted">{{ log.created_at }}</small>
+                                        <span class="fw-semibold">{{ log.task_name }}</span>
+                                        <small class="text-muted">{{ log.logged_at }}</small>
                                     </div>
                                     <small class="text-muted" v-if="log.description">{{ log.description }}</small>
-                                    <div class="small text-muted" v-if="log.task">
-                                        Task: <router-link :to="'/tasks/' + log.task.id">{{ log.task.title }}</router-link>
+                                    <div class="small text-muted" v-if="log.hours_worked">
+                                        Hours: {{ log.hours_worked }}
                                     </div>
                                 </div>
                                 <div v-if="!dashboard.recent_activity?.length" class="list-group-item text-muted text-center">No recent activity</div>
@@ -93,7 +93,7 @@ const dashboard = ref({})
 const loading = ref(true)
 
 const stats = computed(() => [
-    { label: 'Assigned Tasks', value: dashboard.value.assigned_tasks, color: '#0d6efd' },
+    { label: 'Assigned Tasks', value: dashboard.value.total_assigned_tasks, color: '#0d6efd' },
     { label: 'Completed', value: dashboard.value.completed_tasks, color: '#198754' },
     { label: 'Pending', value: dashboard.value.pending_tasks, color: '#ffc107' },
     { label: 'Overdue', value: dashboard.value.overdue_tasks, color: '#dc3545' },

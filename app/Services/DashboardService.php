@@ -83,6 +83,7 @@ class DashboardService
                 'deadline' => $t->deadline->format('Y-m-d'),
                 'priority' => $t->priority,
                 'status' => $t->status,
+                'days_remaining' => (int) now()->diffInDays($t->deadline, false),
                 'assigned_user' => $t->assignedUser?->name,
                 'project_name' => $t->project?->name,
             ]);
