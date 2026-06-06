@@ -153,7 +153,7 @@ async function fetchData() {
         workLogs.value = logsRes.data.data || []
 
         const user = JSON.parse(localStorage.getItem('user') || '{}')
-        const role = user.roles?.[0]
+        const role = user.roles?.[0]?.name
         const assignedTo = task.value.assigned_to
         canLogWork.value = role === 'admin' || role === 'project-manager' || (role === 'employee' && assignedTo === user.id)
         canReply.value = role === 'admin' || role === 'project-manager'

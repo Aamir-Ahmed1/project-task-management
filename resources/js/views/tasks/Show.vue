@@ -203,7 +203,7 @@ const route = useRoute()
 const flash = inject('flash')
 
 const user = JSON.parse(localStorage.getItem('user') || '{}')
-const role = user.roles?.[0]
+const role = user.roles?.[0]?.name
 const userId = user.id
 
 const loading = ref(true)

@@ -127,7 +127,7 @@ async function fetchTasks(page = 1) {
         tasks.value = res.data.data
         meta.value = res.data.meta || { current_page: 1, last_page: 1 }
         const user = JSON.parse(localStorage.getItem('user') || '{}')
-        const role = user.roles?.[0]
+        const role = user.roles?.[0]?.name
         canCreate.value = role === 'admin' || role === 'project-manager'
         canDelete.value = role === 'admin'
     } catch (e) {

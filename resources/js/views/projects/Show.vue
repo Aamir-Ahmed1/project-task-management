@@ -183,7 +183,7 @@ onMounted(async () => {
         tasks.value = tasksRes.data.data
 
         const user = JSON.parse(localStorage.getItem('user') || '{}')
-        const role = user.roles?.[0]
+        const role = user.roles?.[0]?.name
         canEdit.value = role === 'admin' || (role === 'project-manager' && project.value.project_manager_id === user.id)
         canArchive.value = role === 'admin' || role === 'project-manager'
     } catch (e) {

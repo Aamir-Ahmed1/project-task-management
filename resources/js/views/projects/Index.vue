@@ -115,7 +115,7 @@ async function fetchProjects(page = 1) {
         projects.value = res.data.data
         meta.value = res.data.meta || { current_page: 1, last_page: 1 }
         const user = JSON.parse(localStorage.getItem('user') || '{}')
-        const role = user.roles?.[0]
+        const role = user.roles?.[0]?.name
         canCreate.value = role === 'admin'
         canArchive.value = role === 'admin' || role === 'project-manager'
     } catch (e) {
