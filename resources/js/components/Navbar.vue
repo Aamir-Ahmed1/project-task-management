@@ -29,7 +29,7 @@ const { user, logout: doLogout } = useAuth()
 const router = useRouter()
 const unreadCount = ref(0)
 
-const userRole = user.value?.roles?.[0] || ''
+const userRole = user.value?.roles?.[0]?.name || ''
 
 async function logout() {
     await doLogout()

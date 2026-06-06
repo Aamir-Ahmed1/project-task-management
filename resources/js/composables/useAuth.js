@@ -6,7 +6,7 @@ const token = ref(null)
 
 export function useAuth() {
     const isLoggedIn = computed(() => !!token.value)
-    const userRole = computed(() => user.value?.roles?.[0] || null)
+    const userRole = computed(() => user.value?.roles?.[0]?.name || null)
     
     async function login(email, password) {
         const res = await api.post('/login', { email, password })
