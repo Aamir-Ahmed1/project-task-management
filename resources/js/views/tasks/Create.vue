@@ -69,10 +69,12 @@
                         </div>
 
                         <div class="col-md-4">
-                            <label class="form-label">Assign To (User ID)</label>
-                            <input v-model="form.assigned_to" type="number" min="1" class="form-control" :class="{ 'is-invalid': errors.assigned_to }">
+                            <label class="form-label">Assign To</label>
+                            <select v-model="form.assigned_to" class="form-select" :class="{ 'is-invalid': errors.assigned_to }">
+                                <option value="">Select Employee</option>
+                                <option v-for="u in employees" :key="u.id" :value="u.id">{{ u.name }} ({{ u.email }})</option>
+                            </select>
                             <div v-if="errors.assigned_to" class="invalid-feedback">{{ errors.assigned_to }}</div>
-                            <div class="form-text">Enter the user ID of the assignee.</div>
                         </div>
 
                         <div class="col-12">
@@ -89,7 +91,7 @@
 </template>
 
 <script setup>
-import { ref, onMounted, inject } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import AppLayout from '../../components/AppLayout.vue'
 import api from '../../composables/useApi'
@@ -101,6 +103,8 @@ const saving = ref(false)
 const loadingProjects = ref(true)
 const errors = ref({})
 const projects = ref([])
+const users = ref([])
+const employees = computed(() => users.value.filter(u => u.role === 'employee'))
 
 const form = ref({
     name: '',
@@ -146,5 +150,11 @@ async function submit() {
     }
 }
 
-onMounted(() => fetchProjects())
+onMounted(async () => {
+    fetchProjects()
+    try {
+        const res = await api.get('/users')
+        users.value = res.data.data
+    } catch (e) { console.error(e) }
+})
 </script>

@@ -46,10 +46,12 @@
                         </div>
 
                         <div class="col-md-6">
-                            <label class="form-label">Project Manager ID <span class="text-danger">*</span></label>
-                            <input v-model="form.project_manager_id" type="number" class="form-control" :class="{ 'is-invalid': errors.project_manager_id }" required>
+                            <label class="form-label">Project Manager <span class="text-danger">*</span></label>
+                            <select v-model="form.project_manager_id" class="form-select" :class="{ 'is-invalid': errors.project_manager_id }" required>
+                                <option value="">Select Manager</option>
+                                <option v-for="u in managers" :key="u.id" :value="u.id">{{ u.name }} ({{ u.email }})</option>
+                            </select>
                             <div v-if="errors.project_manager_id" class="invalid-feedback">{{ errors.project_manager_id }}</div>
-                            <div class="form-text">Enter the user ID of the project manager.</div>
                         </div>
 
                         <div class="col-12">
@@ -66,7 +68,7 @@
 </template>
 
 <script setup>
-import { ref, inject } from 'vue'
+import { ref, computed, onMounted, inject } from 'vue'
 import { useRouter } from 'vue-router'
 import AppLayout from '../../components/AppLayout.vue'
 import api from '../../composables/useApi'
@@ -75,6 +77,8 @@ const router = useRouter()
 const flash = inject('flash')
 const saving = ref(false)
 const errors = ref({})
+const users = ref([])
+const managers = computed(() => users.value.filter(u => u.role === 'project-manager' || u.role === 'admin'))
 
 const form = ref({
     name: '',
@@ -105,4 +109,11 @@ async function submit() {
         saving.value = false
     }
 }
+
+onMounted(async () => {
+    try {
+        const res = await api.get('/users')
+        users.value = res.data.data
+    } catch (e) { console.error(e) }
+})
 </script>

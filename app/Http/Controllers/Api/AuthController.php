@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Helpers\ApiResponse;
 use App\Http\Controllers\Controller;
 use App\Services\AuthService;
+use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -107,6 +108,18 @@ class AuthController extends Controller
         } catch (\Exception $e) {
             return ApiResponse::error($e->getMessage(), 400);
         }
+    }
+
+    public function users(): JsonResponse
+    {
+        $users = User::with('roles')->get()->map(fn ($u) => [
+            'id' => $u->id,
+            'name' => $u->name,
+            'email' => $u->email,
+            'role' => $u->getRoleNames()->first(),
+        ]);
+
+        return ApiResponse::success($users);
     }
 
     public function verificationNotification(Request $request): JsonResponse
