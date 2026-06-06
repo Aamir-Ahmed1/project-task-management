@@ -29,6 +29,9 @@ class Task extends Model
             'deadline' => 'date',
             'estimated_hours' => 'decimal:2',
             'actual_hours' => 'decimal:2',
+            'project_id' => 'integer',
+            'assigned_to' => 'integer',
+            'created_by' => 'integer',
         ];
     }
 

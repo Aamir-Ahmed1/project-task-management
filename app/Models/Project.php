@@ -25,6 +25,8 @@ class Project extends Model
         return [
             'start_date' => 'date',
             'end_date' => 'date',
+            'project_manager_id' => 'integer',
+            'created_by' => 'integer',
         ];
     }
 
