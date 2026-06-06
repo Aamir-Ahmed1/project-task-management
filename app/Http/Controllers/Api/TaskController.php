@@ -25,7 +25,7 @@ class TaskController extends Controller
 
         if ($user->hasRole('employee')) {
             $filters['assignee_id'] = $user->id;
-        } elseif ($user->hasRole('project_manager')) {
+        } elseif ($user->hasRole('project-manager')) {
             $managedProjectIds = $user->managedProjects()->pluck('id')->toArray();
             if (! empty($filters['project_id']) && ! in_array($filters['project_id'], $managedProjectIds)) {
                 return ApiResponse::error('Forbidden. You can only view tasks from your projects.', 403);
@@ -51,7 +51,7 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        if (! $user->hasRole('admin') && ! $user->hasRole('project_manager')) {
+        if (! $user->hasRole('admin') && ! $user->hasRole('project-manager')) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
@@ -73,7 +73,7 @@ class TaskController extends Controller
         $data = $request->all();
         $data['created_by'] = $user->id;
 
-        if ($user->hasRole('project_manager')) {
+        if ($user->hasRole('project-manager')) {
             $project = Project::find($data['project_id']);
             if (! $project || $project->project_manager_id !== $user->id) {
                 return ApiResponse::error('Forbidden. You can only create tasks in your projects.', 403);
@@ -95,7 +95,7 @@ class TaskController extends Controller
             return ApiResponse::error('Forbidden. You can only view your own tasks.', 403);
         }
 
-        if ($user->hasRole('project_manager') && $task->project->project_manager_id !== $user->id) {
+        if ($user->hasRole('project-manager') && $task->project->project_manager_id !== $user->id) {
             return ApiResponse::error('Forbidden. You can only view tasks from your projects.', 403);
         }
 
@@ -110,7 +110,7 @@ class TaskController extends Controller
 
         $task->load('project:id,project_manager_id');
 
-        if (! $user->hasRole('admin') && ! ($user->hasRole('project_manager') && $task->project->project_manager_id === $user->id)) {
+        if (! $user->hasRole('admin') && ! ($user->hasRole('project-manager') && $task->project->project_manager_id === $user->id)) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
@@ -152,7 +152,7 @@ class TaskController extends Controller
         $task->load('project:id,project_manager_id');
 
         $canUpdate = $user->hasRole('admin')
-            || ($user->hasRole('project_manager') && $task->project->project_manager_id === $user->id)
+            || ($user->hasRole('project-manager') && $task->project->project_manager_id === $user->id)
             || $task->assigned_to === $user->id;
 
         if (! $canUpdate) {
@@ -176,7 +176,7 @@ class TaskController extends Controller
     {
         $user = $request->user();
 
-        if (! $user->hasRole('admin') && ! $user->hasRole('project_manager')) {
+        if (! $user->hasRole('admin') && ! $user->hasRole('project-manager')) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
@@ -203,7 +203,7 @@ class TaskController extends Controller
             return ApiResponse::error('Forbidden. You can only view your own tasks.', 403);
         }
 
-        if ($user->hasRole('project_manager') && $task->project->project_manager_id !== $user->id) {
+        if ($user->hasRole('project-manager') && $task->project->project_manager_id !== $user->id) {
             return ApiResponse::error('Forbidden. You can only view tasks from your projects.', 403);
         }
 

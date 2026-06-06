@@ -20,7 +20,7 @@ class ReportController extends Controller
     {
         $user = $request->user();
 
-        if (! $user->hasRole('admin') && ! ($user->hasRole('project_manager') && $project->project_manager_id === $user->id)) {
+        if (! $user->hasRole('admin') && ! ($user->hasRole('project-manager') && $project->project_manager_id === $user->id)) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
@@ -33,7 +33,7 @@ class ReportController extends Controller
     {
         $authUser = $request->user();
 
-        if (! $authUser->hasRole('admin') && ! $authUser->hasRole('project_manager')) {
+        if (! $authUser->hasRole('admin') && ! $authUser->hasRole('project-manager')) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 

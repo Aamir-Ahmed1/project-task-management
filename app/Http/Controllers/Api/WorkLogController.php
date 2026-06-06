@@ -87,7 +87,7 @@ class WorkLogController extends Controller
 
         $workLog->load('task.project:id,project_manager_id');
 
-        if (! $user->hasRole('admin') && ! ($user->hasRole('project_manager') && $workLog->task->project->project_manager_id === $user->id)) {
+        if (! $user->hasRole('admin') && ! ($user->hasRole('project-manager') && $workLog->task->project->project_manager_id === $user->id)) {
             return ApiResponse::error('Forbidden. Only project managers can reply to work logs.', 403);
         }
 
