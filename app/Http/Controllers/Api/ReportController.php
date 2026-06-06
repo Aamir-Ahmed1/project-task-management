@@ -44,7 +44,9 @@ class ReportController extends Controller
 
     public function projectsReport(Request $request): JsonResponse
     {
-        if (! $request->user()->hasRole('admin')) {
+        $user = $request->user();
+
+        if (! $user->hasRole('admin') && ! $user->hasRole('project-manager')) {
             return ApiResponse::error('Forbidden. Insufficient permissions.', 403);
         }
 
